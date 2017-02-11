@@ -1,0 +1,108 @@
+{
+    "author": "Andrew Zuo",
+    "dependencies": {
+        "pebble-clay": "^1.0.3"
+    },
+    "keywords": [],
+    "name": "balanced",
+    "pebble": {
+        "capabilities": [
+            "configurable",
+            "health"
+        ],
+        "displayName": "Balanced",
+        "enableMultiJS": true,
+        "messageKeys": [
+            "darkMode",
+            "trimLeadingZero",
+            "showBluetoothIcon",
+            "bluetoothVibrationType",
+            "bluetoothReconnectionVibrationType",
+            "dateAboveTime",
+            "abridgedMonth",
+            "hideDate",
+            "healthEnabled",
+            "dateAlignment"
+        ],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/Steps3Black.png",
+                    "name": "STEPS_ICON_BLACK",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "chalk",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Steps",
+                    "name": "STEPS_ICON",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "chalk",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/iconImage.png",
+                    "menuIcon": true,
+                    "name": "ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/bt-icon.png",
+                    "name": "BLUETOOTH_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/Futura-Bold-Small.ttf",
+                    "name": "FUTURA_BOLD_42",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/Futura-Medium.ttf",
+                    "name": "FUTURA_MEDIUM_13",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/Futura-Medium.ttf",
+                    "name": "FUTURA_MEDIUM_22",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/Futura-Bold.ttf",
+                    "name": "FUTURA_BOLD_47",
+                    "targetPlatforms": null,
+                    "type": "font"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery"
+        ],
+        "uuid": "60c74b15-e03c-4396-8d45-f01d918569f6",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "2.1.0"
+}
