@@ -6,7 +6,7 @@
 // the date text * 2 as an approximator. Possibly due to using the
 // same file as the date font.
 
-
+// TODO: hide date does not work immediately. It works after going into a menu and exiting.
 // TODO: make 7 consistent, make round font characters just a tiny bit taller
 // TODO: Some times look a bit off due to '1' being small. Like 2:11.
 // TODO: The '1' character does not go as far down as the '2' and '8' characters
@@ -178,6 +178,9 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   if (hideDate) {
     settings.hideDate = hideDate->value->int8;
     
+		// First destroy the date layer
+    text_layer_destroy(dateLayer);
+		
     updateDate = true;
     
   }
@@ -638,18 +641,57 @@ static void update_time() {
 // Draws time box
 static void drawCenterBox(bool nowTwoDigitHour) {
   
-    // Configure boxes that will be the position of our layers
-    if (nowTwoDigitHour) /* We don't need as much padding */ {
-      centerBoxPoint.x = 0;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_SMALL_ZERO_OFFSET;
-      centerBoxPoint.y = 0;
-    } else {
-      centerBoxPoint.x = LEADING_LARGE_ZERO_OFFSET;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_LARGE_ZERO_OFFSET;
-      centerBoxPoint.y = 0;
-      //APP_LOG(APP_LOG_LEVEL_DEBUG, "Large offset");
-    }
-    centerBoxPoint.y += bounds.size.h/2 - 2 * centerTextSize.h/3;
-    centerTextBox.origin = centerBoxPoint;
-    centerTextBox.size = GSize(bounds.size.w, centerTextSize.h * 2); // A little extra height and width
+		/* I wanted to allow Pebble to handle centering text on it's own but I guess that doesn't work
+		
+		// Font and alignment
+    switch(settings.dateAlignment) {
+      
+      // Right aligned
+      case 0:
+
+				// Configure boxes that will be the position of our layers
+				if (nowTwoDigitHour) {
+					centerBoxPoint.x = 0;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_SMALL_ZERO_OFFSET;
+					centerBoxPoint.y = 0;
+				} else {
+					centerBoxPoint.x = LEADING_LARGE_ZERO_OFFSET;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_LARGE_ZERO_OFFSET;
+					centerBoxPoint.y = 0;
+					//APP_LOG(APP_LOG_LEVEL_DEBUG, "Large offset");
+				}
+				centerBoxPoint.y += bounds.size.h/2 - 2 * centerTextSize.h/3;
+				centerTextBox.origin = centerBoxPoint;
+				centerTextBox.size = GSize(bounds.size.w, centerTextSize.h * 2); // A little extra height and width
+      
+      // Center aligned
+      case 1:
+
+				// Configure boxes that will be the position of our layers
+				centerBoxPoint.x = 0;
+				centerBoxPoint.y = 0;
+			
+				centerBoxPoint.y += bounds.size.h/2 - 2 * centerTextSize.h/3;
+					
+				centerTextBox.origin = centerBoxPoint;
+				centerTextBox.size = GSize(bounds.size.w, centerTextSize.h * 2); // A little extra height and width
+        break;
+      default:
+        break;
+    }*/
+			
+			
+		// Configure boxes that will be the position of our layers
+		if (nowTwoDigitHour) /* We don't need as much padding */ {
+			centerBoxPoint.x = 0;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_SMALL_ZERO_OFFSET;
+			centerBoxPoint.y = 0;
+		} else {
+			centerBoxPoint.x = LEADING_LARGE_ZERO_OFFSET;//bounds.size.w/2 - centerTextSize.w/2 + LEADING_LARGE_ZERO_OFFSET;
+			centerBoxPoint.y = 0;
+			//APP_LOG(APP_LOG_LEVEL_DEBUG, "Large offset");
+		}
+		centerBoxPoint.y += bounds.size.h/2 - 2 * centerTextSize.h/3;
+		centerTextBox.origin = centerBoxPoint;
+		centerTextBox.size = GSize(bounds.size.w, centerTextSize.h * 2); // A little extra height and width
+	
     s_time_layer = text_layer_create(centerTextBox);
   
     // Set the font colour
