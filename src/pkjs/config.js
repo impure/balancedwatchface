@@ -68,7 +68,7 @@ module.exports = [
       {
         "type": "select",
         "messageKey": "dateAlignment",
-        "defaultValue": 0,
+        "defaultValue": 1,
         "label": "Date Alignment",
         "options": [
           { 

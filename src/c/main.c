@@ -6,12 +6,6 @@
 // the date text * 2 as an approximator. Possibly due to using the
 // same file as the date font.
 
-// TODO: hide date does not work immediately. It works after going into a menu and exiting.
-// TODO: make 7 consistent, make round font characters just a tiny bit taller
-// TODO: Some times look a bit off due to '1' being small. Like 2:11.
-// TODO: The '1' character does not go as far down as the '2' and '8' characters
-// TODO: The icons transparency is being turned black in non-dark mode which looks ugly
-
 // [Fixed] Vibration test on settings change only trigger if settings actually change
 // [Fixed] Bug: Time is weird. Mod 12 is not sufficient for adequately computing time.
 // [Fixed] Bug: Text appearing too far up is caused by text being too long causing it to create an extra line.
@@ -405,7 +399,7 @@ static void main_window_load(Window *window) {
   settings.abridgedMonth = false;
   settings.hideDate = false;
   settings.healthEnabled = healthCapable;
-  settings.dateAlignment = 0;
+  settings.dateAlignment = 1;
 
   // Create the Bluetooth bitmap layer
   // If round pebble draw bluetooth lost in middle of display or it'll be clipped by corners
