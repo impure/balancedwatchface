@@ -502,7 +502,8 @@ static void init() {
   if (settings.darkMode) {
     window_set_background_color(s_main_window, GColorBlack);
   }
-  
+  // This sets Locale to Pebbles's Locale Settings
+  setlocale(LC_TIME, "");
 }
 
 // Destroy window on closing
@@ -523,10 +524,8 @@ static void update_time() {
   struct tm *tick_time = localtime(&temp);
   bool nowTwoDigitHour;
   static char s_buffer[8]; // This has to be static. Why? ¯\_(ツ)_/¯
-  static char monthDay[16];
+  static char dateString[22];
   static char day[3];
-  
-  // debugSteps++;
   
   // Write the current hours and minutes into a buffer
   if /* The first character is a '0' indicating leading zero */ (!settings.trimLeadingZero) {
@@ -548,20 +547,78 @@ static void update_time() {
   // Get the month and shorten it if there is a leading 0
   // Day has to be length 3 to hold the terminating character
   strftime(day, sizeof(day), "%d", tick_time);
-  if (day[0] == '0') /* Shift everything one space up */ {
-    day[0] = day[1];
-    day[1] = day[2]; // Should be null
+
+  // get the system language configuration
+  const char * sys_locale = i18n_get_system_locale();
+  const char * strftimestring;  
+  if (strcmp(sys_locale,"es_ES")==0) {
+    if   (settings.abridgedMonth) {
+      if (day[0] == '0'){
+        strftimestring = "%a%e de %b";
+      }else{
+        strftimestring = "%a %e de %b";
+      }
+    }else{
+      strftimestring = "%e de %B";
+    }
+  }else if (strcmp(sys_locale,"fr_FR")==0) {
+    if (settings.abridgedMonth) {
+      if (day[0] == '0'){
+        strftimestring = "%a%e %b";
+      }else{
+        strftimestring = "%a %e %b";
+      }
+    }else{
+      strftimestring = "%e %B";
+    }
+  }else if (strcmp(sys_locale,"de_DE")==0) {
+    if (settings.abridgedMonth) {
+      if (day[0] == '0'){
+        strftimestring = "%a,%e. %b";
+      }else{
+        strftimestring = "%a, %e. %b";
+      }
+    }else{
+      strftimestring = "%e. %B";
+    }
+  }else if (strcmp(sys_locale,"it_IT")==0) {
+    if (settings.abridgedMonth) {
+      if (day[0] == '0'){
+        strftimestring = "%a%e %b";
+      }else{
+        strftimestring = "%a %e %b";
+      }
+    }else{
+      strftimestring = "%e %B";
+    }
+  }else if (strcmp(sys_locale,"pt_PT")==0) {
+    if (settings.abridgedMonth) {
+      if (day[0] == '0'){      
+        strftimestring = "%a,%e de %b";
+      }else{
+         strftimestring = "%a, %e de %b";
+      }
+    }else{
+      strftimestring = "%e de %B";
+    } 
+  }else{
+    if (settings.abridgedMonth){
+      if (day[0] == '0'){      
+        strftimestring = "%a, %b%e";
+      }else{
+        strftimestring = "%a, %b %e";
+      }      
+    }else{
+      if (day[0] == '0'){      
+        strftimestring = "%a, %B %e";
+      }else{
+        strftimestring = "%a, %B%e";
+      }
+    }
   }
   
-  // Copy month and day to monthDay buffer
-  if (settings.abridgedMonth) {
-    strftime(monthDay, sizeof(monthDay), "%a, %b ", tick_time);
-  } else {
-    strftime(monthDay, sizeof(monthDay), "%B ", tick_time);
-  }
-  
-  // Apend the day to the monthDay buffer
-  strcat(monthDay, day);
+  // Get the Date String of the pebble system Language with the srftime function
+  strftime(dateString, sizeof(dateString), strftimestring, tick_time);
   
   // Calculate the size of the text and use that to set the point (middle center). 
   // Note: graphics_text_layout_get_content_size calculates size for single character not maximum size
@@ -626,7 +683,7 @@ static void update_time() {
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
   if (!settings.hideDate) {
-    text_layer_set_text(dateLayer, monthDay);
+    text_layer_set_text(dateLayer, dateString);
   }
   
 }
@@ -775,7 +832,7 @@ static void drawDate() {
   
 }
 
-// Draws the date and day
+// Draws Step Counter
 static void drawHealthBar() {
     GSize stepSize;
     static char numSteps[8];
