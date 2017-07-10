@@ -28,7 +28,7 @@ typedef struct ClaySettings {
   int8_t bluetoothReconnectionVibrationType;
   bool showBluetoothIcon;
   bool dateAboveTime;
-  bool abridgedMonth;
+  bool showDayOfWeek;
   bool hideDate;
   bool healthEnabled;
   
@@ -50,6 +50,7 @@ typedef struct ClaySettings {
 #define MAKE_STEPS_BLACK
 #define DESTROY_STEPS
 #endif
+
 
 static void main_window_load(Window *window);
 static void main_window_unload(Window *window);

@@ -3,10 +3,10 @@ module.exports = [
     "type": "heading",
     "defaultValue": "Balanced Settings"
   },
-  {
-    "type": "text",
-    "defaultValue": "Version 2.1",
-  },
+	{
+		"type": "text",
+		"defaultValue": "For those interested in modifying the code it can be found here: https://github.com/impure/balancedwatchface"
+	},
   {
     "type": "section",
     "items": [
@@ -51,9 +51,9 @@ module.exports = [
       },
       {
         "type": "toggle",
-        "messageKey": "abridgedMonth",
+        "messageKey": "showDayOfWeek",
         "label": "Shortened Month and include Day of the Week",
-        "defaultValue": false
+        "defaultValue": true
       },
       {
         "type": "text",

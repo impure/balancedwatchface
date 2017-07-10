@@ -64,11 +64,6 @@ static GBitmap *s_bt_icon_bitmap;
 // User customizable settings
 ClaySettings settings;
 
-// Only for debugging. Remove after.
-// This is to artificially increase step count as I don't know how to do this in emulator
-// static int debugSteps = 0;
-
-
 // Handle bluetooth disconnect. Note: takes a long time to notice we've lost
 // bluetooth connection.
 static void bluetooth_callback(bool connected) {
@@ -159,9 +154,9 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   }
   
   // Abridged Month
-  Tuple *abridgedMonth = dict_find(iter, MESSAGE_KEY_abridgedMonth);
-  if (abridgedMonth) {
-    settings.abridgedMonth = abridgedMonth->value->int8;
+  Tuple *showDayOfWeek = dict_find(iter, MESSAGE_KEY_showDayOfWeek);
+  if (showDayOfWeek) {
+    settings.showDayOfWeek = showDayOfWeek->value->int8;
     
     updateDate = true;
     
@@ -396,7 +391,7 @@ static void main_window_load(Window *window) {
   settings.bluetoothReconnectionVibrationType = 0;
   settings.showBluetoothIcon = true;
   settings.dateAboveTime = true;
-  settings.abridgedMonth = false;
+  settings.showDayOfWeek = true;
   settings.hideDate = false;
   settings.healthEnabled = healthCapable;
   settings.dateAlignment = 1;
@@ -552,68 +547,40 @@ static void update_time() {
   const char * sys_locale = i18n_get_system_locale();
   const char * strftimestring;  
   if (strcmp(sys_locale,"es_ES")==0) {
-    if   (settings.abridgedMonth) {
-      if (day[0] == '0'){
-        strftimestring = "%a%e de %b";
-      }else{
-        strftimestring = "%a %e de %b";
-      }
+    if   (settings.showDayOfWeek) {
+      strftimestring = "%a %e de %b";
     }else{
       strftimestring = "%e de %B";
     }
   }else if (strcmp(sys_locale,"fr_FR")==0) {
-    if (settings.abridgedMonth) {
-      if (day[0] == '0'){
-        strftimestring = "%a%e %b";
-      }else{
-        strftimestring = "%a %e %b";
-      }
+    if (settings.showDayOfWeek) {
+       strftimestring = "%a %e %b";
     }else{
       strftimestring = "%e %B";
     }
   }else if (strcmp(sys_locale,"de_DE")==0) {
-    if (settings.abridgedMonth) {
-      if (day[0] == '0'){
-        strftimestring = "%a,%e. %b";
-      }else{
-        strftimestring = "%a, %e. %b";
-      }
+    if (settings.showDayOfWeek) {
+      strftimestring = "%a, %e. %b";
     }else{
       strftimestring = "%e. %B";
     }
   }else if (strcmp(sys_locale,"it_IT")==0) {
-    if (settings.abridgedMonth) {
-      if (day[0] == '0'){
-        strftimestring = "%a%e %b";
-      }else{
-        strftimestring = "%a %e %b";
-      }
+    if (settings.showDayOfWeek) {
+       strftimestring = "%a %e %b";
     }else{
       strftimestring = "%e %B";
     }
   }else if (strcmp(sys_locale,"pt_PT")==0) {
-    if (settings.abridgedMonth) {
-      if (day[0] == '0'){      
-        strftimestring = "%a,%e de %b";
-      }else{
-         strftimestring = "%a, %e de %b";
-      }
+    if (settings.showDayOfWeek) {
+        strftimestring = "%a, %e de %b";
     }else{
       strftimestring = "%e de %B";
     } 
   }else{
-    if (settings.abridgedMonth){
-      if (day[0] == '0'){      
-        strftimestring = "%a, %b%e";
-      }else{
-        strftimestring = "%a, %b %e";
-      }      
+    if (settings.showDayOfWeek){     
+      strftimestring = "%a, %b %e";
     }else{
-      if (day[0] == '0'){      
-        strftimestring = "%a, %B %e";
-      }else{
-        strftimestring = "%a, %B%e";
-      }
+      strftimestring = "%B %e";
     }
   }
   
