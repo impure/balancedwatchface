@@ -518,9 +518,32 @@ static void update_time() {
   time_t temp = time(NULL);
   struct tm *tick_time = localtime(&temp);
   bool nowTwoDigitHour;
-  static char s_buffer[8]; // This has to be static. Why? ¯\_(ツ)_/¯
-  static char dateString[22];
-  static char day[3];
+	// The string the entire date is stored in. Must be static.
+	static char builtUpTimeString[32];
+  static char s_buffer[8];
+	char dayOfMonth[8];
+	char dayOfWeek[16];
+	char month[16];
+  char conditionalComma[2];
+  char conditionalSpace[2];
+
+	// Set up the components to be displayed so we can put them toghether later
+  strftime(dayOfMonth, 8, "%e", tick_time);
+	if (tick_time->tm_mday <= 9){
+		dayOfMonth[0] = dayOfMonth[1];
+		dayOfMonth[1] = dayOfMonth[2];
+	}
+  if (settings.showDayOfWeek) {
+  	strftime(month, 8, "%b", tick_time);
+  	strftime(dayOfWeek, 16, "%a", tick_time);
+		strcpy(conditionalSpace, " ");
+		strcpy(conditionalComma, ",");
+  } else {
+  	strftime(month, 8, "%B", tick_time);
+		strcpy(dayOfWeek, "");
+		strcpy(conditionalSpace, "");
+		strcpy(conditionalComma, "");
+  }
   
   // Write the current hours and minutes into a buffer
   if /* The first character is a '0' indicating leading zero */ (!settings.trimLeadingZero) {
@@ -538,54 +561,57 @@ static void update_time() {
       nowTwoDigitHour = (tick_time->tm_hour % 12 == 0 || tick_time->tm_hour % 12 >= 10);
     }
   }
-  
-  // Get the month and shorten it if there is a leading 0
-  // Day has to be length 3 to hold the terminating character
-  strftime(day, sizeof(day), "%d", tick_time);
-
+	
   // get the system language configuration
   const char * sys_locale = i18n_get_system_locale();
-  const char * strftimestring;  
-  if (strcmp(sys_locale,"es_ES")==0) {
-    if   (settings.showDayOfWeek) {
-      strftimestring = "%a %e de %b";
-    }else{
-      strftimestring = "%e de %B";
-    }
-  }else if (strcmp(sys_locale,"fr_FR")==0) {
-    if (settings.showDayOfWeek) {
-       strftimestring = "%a %e %b";
-    }else{
-      strftimestring = "%e %B";
-    }
-  }else if (strcmp(sys_locale,"de_DE")==0) {
-    if (settings.showDayOfWeek) {
-      strftimestring = "%a, %e. %b";
-    }else{
-      strftimestring = "%e. %B";
-    }
-  }else if (strcmp(sys_locale,"it_IT")==0) {
-    if (settings.showDayOfWeek) {
-       strftimestring = "%a %e %b";
-    }else{
-      strftimestring = "%e %B";
-    }
+	
+	// Force the watch to empty string.
+	strcpy(builtUpTimeString, "");
+	
+	if (strcmp(sys_locale,"es_ES")==0) {
+		// Format: [dayOfWeek ]dayOfMonth de month 
+		strcat(builtUpTimeString, dayOfWeek);
+		strcat(builtUpTimeString, conditionalSpace);
+		strcat(builtUpTimeString, dayOfMonth);
+		strcat(builtUpTimeString, " de ");
+		strcat(builtUpTimeString, month);
+		
+	} else if (strcmp(sys_locale,"de_DE")==0) {
+		// Format: [dayOfWeek, ]day. month 
+		strcat(builtUpTimeString, dayOfWeek);
+		strcat(builtUpTimeString, conditionalComma);
+		strcat(builtUpTimeString, conditionalSpace);
+		strcat(builtUpTimeString, dayOfMonth);
+		strcat(builtUpTimeString, ". ");
+		strcat(builtUpTimeString, month);
+		
+  }else if (strcmp(sys_locale,"it_IT")==0 || strcmp(sys_locale,"fr_FR")==0) {
+		// Format: [dayOfWeek ]dayOfMonth month 
+		strcat(builtUpTimeString, dayOfWeek);
+		strcat(builtUpTimeString, conditionalSpace);
+		strcat(builtUpTimeString, dayOfMonth);
+		strcat(builtUpTimeString, " ");
+		strcat(builtUpTimeString, month);
+		
   }else if (strcmp(sys_locale,"pt_PT")==0) {
-    if (settings.showDayOfWeek) {
-        strftimestring = "%a, %e de %b";
-    }else{
-      strftimestring = "%e de %B";
-    } 
+		// Format: [dayOfWeek, ]dayOfMonth de month 
+		strcat(builtUpTimeString, dayOfWeek);
+		strcat(builtUpTimeString, conditionalComma);
+		strcat(builtUpTimeString, conditionalSpace);
+		strcat(builtUpTimeString, dayOfMonth);
+		strcat(builtUpTimeString, " de ");
+		strcat(builtUpTimeString, month);
+			
   }else{
-    if (settings.showDayOfWeek){     
-      strftimestring = "%a, %b %e";
-    }else{
-      strftimestring = "%B %e";
-    }
+		// Format: [dayOfWeek, ]month dayOfMonth 
+		strcat(builtUpTimeString, dayOfWeek);
+		strcat(builtUpTimeString, conditionalComma);
+		strcat(builtUpTimeString, conditionalSpace);
+		strcat(builtUpTimeString, month);
+		strcat(builtUpTimeString, " ");
+		strcat(builtUpTimeString, dayOfMonth);
+		
   }
-  
-  // Get the Date String of the pebble system Language with the srftime function
-  strftime(dateString, sizeof(dateString), strftimestring, tick_time);
   
   // Calculate the size of the text and use that to set the point (middle center). 
   // Note: graphics_text_layout_get_content_size calculates size for single character not maximum size
@@ -650,7 +676,7 @@ static void update_time() {
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, s_buffer);
   if (!settings.hideDate) {
-    text_layer_set_text(dateLayer, dateString);
+    text_layer_set_text(dateLayer, builtUpTimeString);
   }
   
 }
